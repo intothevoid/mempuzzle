@@ -111,6 +111,21 @@ def split_into_groups_of(group_size, the_list):
     return result
 
 
+def draw_box_covers(board, boxes, coverage):
+    # draw boxes being covered / revealed. boxes is a list
+    # of two item lists, which have the x and y spot of a box
+    for box in boxes:
+        left, top = left_top_coords_of_box(box[0], box[1])
+        pygame.draw.rect(DISPLAYSURF, BGCOLOUR, (left, top, BOXSIZE, BOXSIZE))
+        shape, colour = get_shape_and_colour(board, box[0], box[1])
+        draw_icon(shape, colour, box[0], box[1])
+        if coverage > 0:
+            pygame.draw.rect(DISPLAYSURF, BGCOLOUR,
+                             (left, top, coverage, BOXSIZE))
+        pygame.display.update()
+        FPSCLOCK.tick(FPS)
+
+
 def reveal_boxes_animation(board, boxes_to_reveal):
     # do the box reveal animation
     for coverage in range(BOXSIZE, (-REVEALSPEED) - 1, -REVEALSPEED):
