@@ -55,7 +55,7 @@ def main():
     main_board = get_randomised_board()
     revealed_boxes = generate_revealed_boxes_data(False)
 
-    first_selection = None # store the (x,y) of the first box clicked
+    first_selection = None  # store the (x,y) of the first box clicked
 
     DISPLAYSURF.fill(BGCOLOUR)
     start_game_animation(main_board)
@@ -103,21 +103,25 @@ def get_randomised_board() -> list:
 
     return board
 
+
 def split_into_groups_of(group_size, the_list):
     result = []
     for i in range(0, len(the_list), group_size):
         result.append(the_list[i:i + group_size])
     return result
 
+
 def reveal_boxes_animation(board, boxes_to_reveal):
     # do the box reveal animation
     for coverage in range(BOXSIZE, (-REVEALSPEED) - 1, -REVEALSPEED):
         draw_box_covers(board, boxes_to_reveal, coverage)
 
+
 def cover_boxes_animation(board, boxes_to_cover):
     # do the cover animation
     for coverage in range(0, BOXSIZE + REVEALSPEED, REVEALSPEED):
         draw_box_covers(board, boxes_to_cover, coverage)
+
 
 def draw_board(board, revealed):
     # draw boxes in covered or revealed state
@@ -126,15 +130,19 @@ def draw_board(board, revealed):
             left, top = left_top_coords_of_box(boxx, boxy)
             if not revealed[boxx][boxy]:
                 # draw a covered box
-                pygame.draw.rect(DISPLAYSURF, BOXCOLOUR, (left, top, BOXSIZE, BOXSIZE))
+                pygame.draw.rect(DISPLAYSURF, BOXCOLOUR,
+                                 (left, top, BOXSIZE, BOXSIZE))
             else:
                 # draw an icon
                 shape, colour = get_shape_and_colour(boxx, boxy)
                 draw_icon(shape, colour, boxx, boxy)
 
+
 def draw_highlight_box(boxx, boxy):
     left, top = left_top_coords_of_box(boxx, boxy)
-    pygame.draw.rect(DISPLAYSURF, HIGHLIGHTCOLOUR, (left -5, top - 5, BOXSIZE + 10, BOXSIZE + 10), 4)
+    pygame.draw.rect(DISPLAYSURF, HIGHLIGHTCOLOUR, (left - 5,
+                                                    top - 5, BOXSIZE + 10, BOXSIZE + 10), 4)
+
 
 def start_game_animation(board):
     # randomly reveal boxes, 8 at a time
@@ -153,7 +161,6 @@ def start_game_animation(board):
     for box_group in box_groups:
         reveal_boxes_animation(board, box_group)
         cover_boxes_animation(board, box_group)
-
 
 
 if __name__ == "__main__":
