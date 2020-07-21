@@ -14,18 +14,18 @@ BOARDWIDTH = 10
 BOARDHEIGHT = 7
 assert(BOARDHEIGHT * BOARDWIDTH) % 2 == 0, "Board needs to have an even no. of boxes for pairs of matches."
 XMARGIN = int((WINDOWWIDTH - (BOARDWIDTH * (BOXSIZE + GAPSIZE))) / 2)
-XMARGIN = int((WINDOWHEIGHT - (BOARDHEIGHT * (BOXSIZE + GAPSIZE))) / 2)
+YMARGIN = int((WINDOWHEIGHT - (BOARDHEIGHT * (BOXSIZE + GAPSIZE))) / 2)
 
 # R    G    B
 GRAY = (100, 100, 100)
-NAVYBLUE = (60,  60, 100)
+NAVYBLUE = (60, 60, 100)
 WHITE = (255, 255, 255)
-RED = (255,   0,   0)
-GREEN = (0, 255,   0)
-BLUE = (0,   0, 255)
-YELLOW = (255, 255,   0)
-ORANGE = (255, 128,   0)
-PURPLE = (255,   0, 255)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
+ORANGE = (255, 128, 0)
+PURPLE = (255, 0, 255)
 CYAN = (0, 255, 255)
 BGCOLOUR = NAVYBLUE
 LIGHTBGCOLOUR = GRAY
@@ -46,6 +46,9 @@ assert len(ALLCOLOURS) * len(ALLSHAPES) * 2 >= BOARDHEIGHT * \
 
 
 def main():
+    """
+    main entry point of game
+    """
     global FPSCLOCK, DISPLAYSURF
     pygame.init()
     FPSCLOCK = pygame.time.Clock()
@@ -79,7 +82,7 @@ def generate_revealed_boxes_data(val):
     return revealed_boxes
 
 
-def get_randomised_board() -> list:
+def get_randomised_board():
     icons = []
     for colour in ALLCOLOURS:
         for shape in ALLSHAPES:
@@ -96,13 +99,17 @@ def get_randomised_board() -> list:
     board = []
     for x in range(BOARDWIDTH):
         column = []
-        for y in range(BOARDHEIGHT):
+        for _ in range(BOARDHEIGHT):
             column.append(icons.pop())
 
         board.append(column)
 
     return board
 
+def left_top_coords_of_box(boxx, boxy):
+    left = boxx * (BOXSIZE + GAPSIZE) + XMARGIN
+    right = boxy * (BOXSIZE + GAPSIZE) + YMARGIN
+    return (left, right)
 
 def split_into_groups_of(group_size, the_list):
     result = []
@@ -110,6 +117,30 @@ def split_into_groups_of(group_size, the_list):
         result.append(the_list[i:i + group_size])
     return result
 
+def draw_icon(shape, colour, boxx, boxy):
+    quarter = int(BOXSIZE * 0.25) # syntactic sugar
+    half = int(BOXSIZE * 0.5)  # syntactic sugar
+    left, top = left_top_coords_of_box(boxx, boxy) # get pixel coords from board coords
+
+    # Draw the shapes
+    if shape == DONUT:
+        pygame.draw.circle(DISPLAYSURF, colour, (left + half, top + half), half - 5)
+        pygame.draw.circle(DISPLAYSURF, BGCOLOUR, (left + half, top + half), quarter - 5)
+    elif shape == SQUARE:
+        pygame.draw.rect(DISPLAYSURF, colour, (left + quarter, top + quarter, BOXSIZE - half, BOXSIZE - half))
+    elif shape == DIAMOND:
+        pygame.draw.polygon(DISPLAYSURF, colour, ((left + half, top), (left + BOXSIZE - 1, top + half), (left + half, top + BOXSIZE - 1), (left, top + half)))
+    elif shape == LINES:
+        for i in range(0, BOXSIZE, 4):
+            pygame.draw.line(DISPLAYSURF, colour, (left, top + i), (left + i, top))
+            pygame.draw.line(DISPLAYSURF, colour, (left + i, top + BOXSIZE - 1), (left + BOXSIZE - 1, top + i))
+    elif shape == OVAL:
+        pygame.draw.ellipse(DISPLAYSURF, colour, (left, top + quarter, BOXSIZE, half))
+
+def get_shape_and_colour(board, boxx, boxy):
+    # shape stored in board[boxx][boxy][0]
+    # colour stored in board[boxx][boxy][1]
+    return board[boxx][boxy][0], board[boxx][boxy][1]
 
 def draw_box_covers(board, boxes, coverage):
     # draw boxes being covered / revealed. boxes is a list
@@ -149,7 +180,7 @@ def draw_board(board, revealed):
                                  (left, top, BOXSIZE, BOXSIZE))
             else:
                 # draw an icon
-                shape, colour = get_shape_and_colour(boxx, boxy)
+                shape, colour = get_shape_and_colour(board, boxx, boxy)
                 draw_icon(shape, colour, boxx, boxy)
 
 
