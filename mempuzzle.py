@@ -85,7 +85,7 @@ def main():
                 mouse_clicked = True
 
         boxx, boxy = get_box_at_pixel(mousex, mousey)
-        if boxx is not None and boxy is not None:
+        if boxx != None and boxy != None:
             # The mouse is currently over a box.
             if not revealed_boxes[boxx][boxy]:
                 draw_highlight_box(boxx, boxy)
@@ -120,7 +120,7 @@ def main():
 
                         # Replay the start game animation.
                         start_game_animation(main_board)
-                        first_selection = None  # reset first_selection variable
+                    first_selection = None  # reset first_selection variable
 
         # Redraw the screen and wait a tick
         pygame.display.update()
@@ -172,8 +172,8 @@ def get_box_at_pixel(x, y):
 
 def left_top_coords_of_box(boxx, boxy):
     left = boxx * (BOXSIZE + GAPSIZE) + XMARGIN
-    right = boxy * (BOXSIZE + GAPSIZE) + YMARGIN
-    return (left, right)
+    top = boxy * (BOXSIZE + GAPSIZE) + YMARGIN
+    return (left, top)
 
 
 def split_into_groups_of(group_size, the_list):
@@ -220,7 +220,7 @@ def draw_box_covers(board, boxes, coverage):
         shape, colour = get_shape_and_colour(board, box[0], box[1])
         draw_icon(shape, colour, box[0], box[1])
         if coverage > 0:
-            pygame.draw.rect(DISPLAYSURF, BGCOLOUR,
+            pygame.draw.rect(DISPLAYSURF, BOXCOLOUR,
                              (left, top, coverage, BOXSIZE))
         pygame.display.update()
         FPSCLOCK.tick(FPS)
