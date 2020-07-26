@@ -53,6 +53,9 @@ def main():
     pygame.init()
     FPSCLOCK = pygame.time.Clock()
     DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
+
+    mousex = 0
+    mousey = 0
     pygame.display.set_caption("Memory Puzzle")
 
     main_board = get_randomised_board()
@@ -82,28 +85,28 @@ def main():
                 mouse_clicked = True
 
         boxx, boxy = get_box_at_pixel(mousex, mousey)
-        if boxx != None and boxy != None:
+        if boxx is not None and boxy is not None:
             # The mouse is currently over a box.
-            if not revealedBoxes[boxx][boxy]:
+            if not revealed_boxes[boxx][boxy]:
                 draw_highlight_box(boxx, boxy)
-            if not revealedBoxes[boxx][boxy] and mouse_clicked:
-                reveal_boxes_animation(mainBoard, [(boxx, boxy)])
-                revealedBoxes[boxx][boxy] = True  # set the box as "revealed"
-                if first_selection == None:  # the current box was the first box clicked
+            if not revealed_boxes[boxx][boxy] and mouse_clicked:
+                reveal_boxes_animation(main_board, [(boxx, boxy)])
+                revealed_boxes[boxx][boxy] = True  # set the box as "revealed"
+                if first_selection is None:  # the current box was the first box clicked
                     first_selection = (boxx, boxy)
                 else:  # the current box was the second box clicked
                     # Check if there is a match between the two icons.
-                    icon1shape, icon1color = get_shape_and_colour(mainBoard, first_selection[0], first_selection[1])
-                    icon2shape, icon2color = get_shape_and_colour(mainBoard, boxx, boxy)
+                    icon1shape, icon1color = get_shape_and_colour(main_board, first_selection[0], first_selection[1])
+                    icon2shape, icon2color = get_shape_and_colour(main_board, boxx, boxy)
 
                     if icon1shape != icon2shape or icon1color != icon2color:
                         # Icons don't match. Re-cover up both selections.
                         pygame.time.wait(1000)  # 1000 milliseconds = 1 sec
-                        cover_boxes_animation(mainBoard, [(first_selection[0], first_selection[1]), (boxx, boxy)])
-                        revealedBoxes[first_selection[0]][first_selection[1]] = False
-                        revealedBoxes[boxx][boxy] = False
-                    elif has_won(revealedBoxes):  # check if all pairs found
-                        game_won_animation(mainBoard)
+                        cover_boxes_animation(main_board, [(first_selection[0], first_selection[1]), (boxx, boxy)])
+                        revealed_boxes[first_selection[0]][first_selection[1]] = False
+                        revealed_boxes[boxx][boxy] = False
+                    elif has_won(revealed_boxes):  # check if all pairs found
+                        game_won_animation(main_board)
                         pygame.time.wait(2000)
 
                         # Reset the board
