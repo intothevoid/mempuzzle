@@ -110,16 +110,16 @@ def main():
                         pygame.time.wait(2000)
 
                         # Reset the board
-                        mainBoard = get_randomised_board()
-                        revealedBoxes = generate_revealed_boxes_data(False)
+                        main_board = get_randomised_board()
+                        revealed_boxes = generate_revealed_boxes_data(False)
 
                         # Show the fully unrevealed board for a second.
-                        draw_board(mainBoard, revealedBoxes)
+                        draw_board(main_board, revealed_boxes)
                         pygame.display.update()
                         pygame.time.wait(1000)
 
                         # Replay the start game animation.
-                        start_game_animation(mainBoard)
+                        start_game_animation(main_board)
                         first_selection = None  # reset first_selection variable
 
         # Redraw the screen and wait a tick
@@ -138,7 +138,7 @@ def get_randomised_board():
     icons = []
     for colour in ALLCOLOURS:
         for shape in ALLSHAPES:
-            icons.append((colour, shape))
+            icons.append((shape, colour))
 
     random.shuffle(icons)  # randomise the order of the icons
 
@@ -152,7 +152,8 @@ def get_randomised_board():
     for x in range(BOARDWIDTH):
         column = []
         for _ in range(BOARDHEIGHT):
-            column.append(icons.pop())
+            column.append(icons[0])
+            del icons[0]
 
         board.append(column)
 
